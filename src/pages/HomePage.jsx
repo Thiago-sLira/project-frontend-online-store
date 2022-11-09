@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Categories from '../components/Categories';
 
 class HomePage extends Component {
   state = {
@@ -43,7 +44,7 @@ class HomePage extends Component {
             onChange={ this.handleChange }
           />
         </label>
-
+        <Categories />
       </div>
     );
   }
