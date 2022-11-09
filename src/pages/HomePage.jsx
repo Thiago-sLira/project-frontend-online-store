@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class HomePage extends Component {
   state = {
@@ -12,11 +13,23 @@ class HomePage extends Component {
     });
   };
 
+  handleClick = () => {
+    const { history } = this.props;
+    history.push('/shoppingcart');
+  };
+
   render() {
     const { searchInput } = this.state;
     return (
       <div>
-        Home
+        <button
+          data-testid="shopping-cart-button"
+          type="button"
+          onClick={ this.handleClick }
+        >
+          Cart
+
+        </button>
         {!searchInput && (
           <h4 data-testid="home-initial-message">
             Digite algum termo de pesquisa ou escolha uma categoria.
@@ -35,4 +48,11 @@ class HomePage extends Component {
     );
   }
 }
+
+HomePage.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
 export default HomePage;
