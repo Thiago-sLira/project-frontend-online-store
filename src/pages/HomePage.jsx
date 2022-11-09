@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Categories from '../components/Categories';
+import { getProductsFromCategoryAndQuery } from '../services/api';
+import ListProducts from '../components/ListProducts';
 
 class HomePage extends Component {
   state = {
     searchInput: '',
+    searchedProducts: [],
   };
 
   handleChange = ({ target }) => {
@@ -19,8 +22,14 @@ class HomePage extends Component {
     history.push('/shoppingcart');
   };
 
-  render() {
+  handleSearchButton = async () => {
     const { searchInput } = this.state;
+    const search = await getProductsFromCategoryAndQuery('', searchInput);
+    this.setState({ searchedProducts: search.results });
+  };
+
+  render() {
+    const { searchInput, searchedProducts } = this.state;
     return (
       <div>
         <button
@@ -29,7 +38,6 @@ class HomePage extends Component {
           onClick={ this.handleClick }
         >
           Cart
-
         </button>
         {!searchInput && (
           <h4 data-testid="home-initial-message">
@@ -42,9 +50,18 @@ class HomePage extends Component {
             name="searchInput"
             value={ searchInput }
             onChange={ this.handleChange }
+            data-testid="query-input"
           />
         </label>
+        <button
+          type="button"
+          data-testid="query-button"
+          onClick={ this.handleSearchButton }
+        >
+          Buscar
+        </button>
         <Categories />
+        <ListProducts searchedProducts={ searchedProducts } />
       </div>
     );
   }
