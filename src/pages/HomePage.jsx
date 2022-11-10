@@ -83,7 +83,7 @@ class HomePage extends Component {
                   {category.name}
                   <input
                     type="radio"
-                    onClick={ () => this.handleClickCategory(event) }
+                    onClick={ this.handleClickCategory }
                     id={ category.id }
                   />
                 </label>
