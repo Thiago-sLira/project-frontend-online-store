@@ -1,13 +1,24 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Categories from '../components/Categories';
-import { getProductsFromCategoryAndQuery } from '../services/api';
+import { getProductsFromCategoryAndQuery, getCategories } from '../services/api';
 import ListProducts from '../components/ListProducts';
 
 class HomePage extends Component {
   state = {
     searchInput: '',
     searchedProducts: [],
+    productByCategories: [],
+  };
+
+  async componentDidMount() {
+    const categories = await getCategories();
+    this.setState({ productByCategories: categories });
+  }
+
+  handleClickCategory = async ({ target }) => {
+    const category = target.id;
+    const gotCategoryProducts = await getProductsFromCategoryAndQuery(category, '');
+    this.setState({ searchedProducts: gotCategoryProducts.results });
   };
 
   handleChange = ({ target }) => {
@@ -29,7 +40,7 @@ class HomePage extends Component {
   };
 
   render() {
-    const { searchInput, searchedProducts } = this.state;
+    const { searchInput, searchedProducts, productByCategories } = this.state;
     return (
       <div>
         <button
@@ -60,7 +71,26 @@ class HomePage extends Component {
         >
           Buscar
         </button>
-        <Categories />
+        <aside>
+          <h3>Categorias</h3>
+          <ul>
+            {productByCategories.map((category) => (
+              <li key={ category.name }>
+                <label
+                  htmlFor={ category.id }
+                  data-testid="category"
+                >
+                  {category.name}
+                  <input
+                    type="radio"
+                    onClick={ () => this.handleClickCategory(event) }
+                    id={ category.id }
+                  />
+                </label>
+              </li>
+            ))}
+          </ul>
+        </aside>
         <ListProducts searchedProducts={ searchedProducts } />
       </div>
     );
