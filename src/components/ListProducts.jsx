@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { arrayOf, number, shape, string } from 'prop-types';
+import { Link } from 'react-router-dom';
 
 class ListProducts extends Component {
   render() {
@@ -14,6 +15,9 @@ class ListProducts extends Component {
                   <span>{ product.title }</span>
                   <img src={ product.thumbnail } alt={ product.title } />
                   <p>{ product.price }</p>
+                  <Link data-testid="product-detail-link" to={ `/${product.id}` }>
+                    Produto Detalhado
+                  </Link>
                 </div>
               ))) }
         </section>
