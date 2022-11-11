@@ -60,24 +60,30 @@ class ShoppingCart extends Component {
     const { cartItemsReduced } = this.state;
     return (
       <div>
-        {cartItemsReduced.length === 0 ? (
-          <h4
-            data-testid="shopping-cart-empty-message"
-          >
-            Seu carrinho está vazio
-          </h4>) : (
-          cartItemsReduced.map((product, index) => (
-            <div key={ `${product.id}${index}` }>
-              <img src={ product.thumbnail } alt={ product.title } />
-              <h6 data-testid="shopping-cart-product-name">{ product.title }</h6>
-              <h6>{ product.price }</h6>
-              <span data-testid="shopping-cart-product-quantity">
-                {`Quantidade no carrinho:${product.quantity}`}
-              </span>
-            </div>
-          ))
-        )}
+        <div>
+          {cartItemsReduced.length === 0 ? (
+            <h4
+              data-testid="shopping-cart-empty-message"
+            >
+              Seu carrinho está vazio
+            </h4>) : (
+            cartItemsReduced.map((product, index) => (
+              <div key={ `${product.id}${index}` }>
+                <button type="button" data-testid="remove-product">X</button>
+                <img src={ product.thumbnail } alt={ product.title } />
+                <h6 data-testid="shopping-cart-product-name">{ product.title }</h6>
+                <h6>{ product.price }</h6>
+                <button type="button" data-testid="product-decrease-quantity">-</button>
+                <span data-testid="shopping-cart-product-quantity">
+                  {`Quantidade no carrinho:${product.quantity}`}
+                </span>
+                <button type="button" data-testid="product-increase-quantity">+</button>
+              </div>
+            ))
+          )}
 
+        </div>
+        <button type="button">Finalizar Compra</button>
       </div>
     );
   }

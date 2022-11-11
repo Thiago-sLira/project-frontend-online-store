@@ -14,6 +14,7 @@ class HomePage extends Component {
   };
 
   async componentDidMount() {
+    localStorage.setItem('cart', JSON.stringify([]));
     const categories = await getCategories();
     this.setState({ listOfCategories: categories });
   }
