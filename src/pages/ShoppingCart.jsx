@@ -71,6 +71,9 @@ class ShoppingCart extends Component {
               <img src={ product.thumbnail } alt={ product.title } />
               <h6 data-testid="shopping-cart-product-name">{ product.title }</h6>
               <h6>{ product.price }</h6>
+              <span data-testid="shopping-cart-product-quantity">
+                {`Quantidade no carrinho:${product.quantity}`}
+              </span>
             </div>
           ))
         )}
