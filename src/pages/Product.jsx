@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { getProductById } from '../services/api';
+import { getProductById, handleLocalStorage } from '../services/api';
 
 class Product extends Component {
   state = {
@@ -13,15 +13,27 @@ class Product extends Component {
     this.setState({ product: resultId });
   }
 
-  handleProduct = () => {
+  handleCartRedirection = () => {
     const { history } = this.props;
     history.push('/shoppingcart');
+  };
+
+  addProductToCart = () => {
+    const { product } = this.state;
+    handleLocalStorage(product);
   };
 
   render() {
     const { product: { title, price, thumbnail } } = this.state;
     return (
       <div>
+        <button
+          data-testid="shopping-cart-button"
+          type="button"
+          onClick={ this.handleCartRedirection }
+        >
+          Ver Carrinho
+        </button>
         <img data-testid="product-detail-image" src={ thumbnail } alt={ title } />
         <h3 data-testid="product-detail-name">{ title }</h3>
         <h4 data-testid="product-detail-price">
@@ -29,9 +41,9 @@ class Product extends Component {
           {`R$ ${price}` }
         </h4>
         <button
-          data-testid="shopping-cart-button"
+          data-testid="product-detail-add-to-cart"
           type="button"
-          onClick={ this.handleProduct }
+          onClick={ this.addProductToCart }
         >
           Adicionar ao Carrinho
         </button>

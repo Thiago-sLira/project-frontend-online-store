@@ -16,3 +16,12 @@ export async function getProductById(productId) {
   const response = await url.json();
   return response;
 }
+
+export function handleLocalStorage(foundProduct) {
+  const getCartProducts = JSON.parse(localStorage.getItem('cart'));
+  if (!getCartProducts) {
+    localStorage.setItem('cart', JSON.stringify([foundProduct]));
+  } else {
+    localStorage.setItem('cart', JSON.stringify([...getCartProducts, foundProduct]));
+  }
+}
