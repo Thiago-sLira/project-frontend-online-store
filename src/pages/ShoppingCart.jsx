@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { handleLocalStorage } from '../services/api';
 
 class ShoppingCart extends Component {
   state = {
@@ -8,7 +9,6 @@ class ShoppingCart extends Component {
 
   componentDidMount() {
     this.restoreCartProducts();
-    this.reduceCartItems();
   }
 
   sortCartItems = () => {
@@ -56,6 +56,27 @@ class ShoppingCart extends Component {
     }
   };
 
+  incrementProductToCart = ({ target: { name } }) => {
+    const { cartItems } = this.state;
+    const find = cartItems.find(({ index }) => index === Number(name));
+    handleLocalStorage(find);
+    this.restoreCartProducts();
+  };
+
+  decrementProductFromCart = ({ target: { name } }) => {
+    const { cartItems } = this.state;
+    const productsNotRemoved = cartItems.filter(({ index }) => Number(name) !== index);
+    localStorage.setItem('cart', JSON.stringify(productsNotRemoved));
+    this.restoreCartProducts();
+  };
+
+  removeProductFromCart = ({ target: { name } }) => {
+    const { cartItems } = this.state;
+    const productsNotRemoved = cartItems.filter((product) => name !== product.id);
+    localStorage.setItem('cart', JSON.stringify(productsNotRemoved));
+    this.restoreCartProducts();
+  };
+
   render() {
     const { cartItemsReduced } = this.state;
     return (
@@ -69,15 +90,36 @@ class ShoppingCart extends Component {
             </h4>) : (
             cartItemsReduced.map((product, index) => (
               <div key={ `${product.id}${index}` }>
-                <button type="button" data-testid="remove-product">X</button>
+                <button
+                  type="button"
+                  data-testid="remove-product"
+                  onClick={ this.removeProductFromCart }
+                  name={ product.id }
+                >
+                  X
+                </button>
                 <img src={ product.thumbnail } alt={ product.title } />
                 <h6 data-testid="shopping-cart-product-name">{ product.title }</h6>
                 <h6>{ product.price }</h6>
-                <button type="button" data-testid="product-decrease-quantity">-</button>
+                <button
+                  type="button"
+                  data-testid="product-decrease-quantity"
+                  onClick={ this.decrementProductFromCart }
+                  name={ product.index }
+                >
+                  -
+                </button>
                 <span data-testid="shopping-cart-product-quantity">
                   {`Quantidade no carrinho:${product.quantity}`}
                 </span>
-                <button type="button" data-testid="product-increase-quantity">+</button>
+                <button
+                  type="button"
+                  data-testid="product-increase-quantity"
+                  onClick={ this.incrementProductToCart }
+                  name={ product.index }
+                >
+                  +
+                </button>
               </div>
             ))
           )}
