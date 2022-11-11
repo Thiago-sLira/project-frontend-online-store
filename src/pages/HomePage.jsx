@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { getProductsFromCategoryAndQuery, getCategories } from '../services/api';
+import {
+  getProductsFromCategoryAndQuery, getCategories, handleLocalStorage,
+} from '../services/api';
 import ListProducts from '../components/ListProducts';
 
 class HomePage extends Component {
@@ -32,10 +34,6 @@ class HomePage extends Component {
   handleClick = () => {
     const { history } = this.props;
     history.push('/shoppingcart');
-    // let sum = 0;
-    // sum += 1;
-    // this.setState({ quantidade: sum });
-    //  console.log(sum);
   };
 
   handleSearchButton = async () => {
@@ -44,19 +42,10 @@ class HomePage extends Component {
     this.setState({ searchedProducts: search.results });
   };
 
-  handleLocalStorage = (foundProduct) => {
-    const getCartProducts = JSON.parse(localStorage.getItem('cart'));
-    if (!getCartProducts) {
-      localStorage.setItem('cart', JSON.stringify([foundProduct]));
-    } else {
-      localStorage.setItem('cart', JSON.stringify([...getCartProducts, foundProduct]));
-    }
-  };
-
   addProductToCart = ({ target: { id } }) => {
     const { searchedProducts } = this.state;
     const foundProduct = searchedProducts.find((product) => product.id === id);
-    this.handleLocalStorage(foundProduct);
+    handleLocalStorage(foundProduct);
   };
 
   render() {
