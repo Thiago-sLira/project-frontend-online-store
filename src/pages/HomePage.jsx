@@ -7,12 +7,13 @@ class HomePage extends Component {
   state = {
     searchInput: '',
     searchedProducts: [],
-    productByCategories: [],
+    listOfCategories: [],
+    // quantidade: [],
   };
 
   async componentDidMount() {
     const categories = await getCategories();
-    this.setState({ productByCategories: categories });
+    this.setState({ listOfCategories: categories });
   }
 
   handleClickCategory = async ({ target }) => {
@@ -31,6 +32,10 @@ class HomePage extends Component {
   handleClick = () => {
     const { history } = this.props;
     history.push('/shoppingcart');
+    // let sum = 0;
+    // sum += 1;
+    // this.setState({ quantidade: sum });
+    //  console.log(sum);
   };
 
   handleSearchButton = async () => {
@@ -39,8 +44,23 @@ class HomePage extends Component {
     this.setState({ searchedProducts: search.results });
   };
 
+  handleLocalStorage = (foundProduct) => {
+    const getCartProducts = JSON.parse(localStorage.getItem('cart'));
+    if (!getCartProducts) {
+      localStorage.setItem('cart', JSON.stringify([foundProduct]));
+    } else {
+      localStorage.setItem('cart', JSON.stringify([...getCartProducts, foundProduct]));
+    }
+  };
+
+  addProductToCart = ({ target: { id } }) => {
+    const { searchedProducts } = this.state;
+    const foundProduct = searchedProducts.find((product) => product.id === id);
+    this.handleLocalStorage(foundProduct);
+  };
+
   render() {
-    const { searchInput, searchedProducts, productByCategories } = this.state;
+    const { searchInput, searchedProducts, listOfCategories } = this.state;
     return (
       <div>
         <button
@@ -74,7 +94,7 @@ class HomePage extends Component {
         <aside>
           <h3>Categorias</h3>
           <ul>
-            {productByCategories.map((category) => (
+            {listOfCategories.map((category) => (
               <li key={ category.name }>
                 <label
                   htmlFor={ category.id }
@@ -91,7 +111,10 @@ class HomePage extends Component {
             ))}
           </ul>
         </aside>
-        <ListProducts searchedProducts={ searchedProducts } />
+        <ListProducts
+          searchedProducts={ searchedProducts }
+          addProductToCart={ this.addProductToCart }
+        />
       </div>
     );
   }

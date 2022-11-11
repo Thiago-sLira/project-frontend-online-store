@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { arrayOf, number, shape, string } from 'prop-types';
+import { arrayOf, func, number, shape, string } from 'prop-types';
 import { Link } from 'react-router-dom';
 
 class ListProducts extends Component {
   render() {
-    const { searchedProducts } = this.props;
+    const { searchedProducts, addProductToCart } = this.props;
     return (
       <div>
         <section>
@@ -12,12 +12,20 @@ class ListProducts extends Component {
             : (
               searchedProducts.map((product) => (
                 <div key={ product.id } data-testid="product">
-                  <span>{ product.title }</span>
-                  <img src={ product.thumbnail } alt={ product.title } />
-                  <p>{ product.price }</p>
                   <Link data-testid="product-detail-link" to={ `/${product.id}` }>
                     Produto Detalhado
                   </Link>
+                  <span>{ product.title }</span>
+                  <img src={ product.thumbnail } alt={ product.title } />
+                  <p>{ product.price }</p>
+                  <button
+                    type="button"
+                    data-testid="product-add-to-cart"
+                    onClick={ addProductToCart }
+                    id={ product.id }
+                  >
+                    Adicionar ao Carrinho
+                  </button>
                 </div>
               ))) }
         </section>
@@ -27,6 +35,7 @@ class ListProducts extends Component {
 }
 
 ListProducts.propTypes = {
+  addProductToCart: func.isRequired,
   searchedProducts: arrayOf(shape({
     id: string,
     title: string,
