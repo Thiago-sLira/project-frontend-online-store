@@ -29,7 +29,7 @@ class ShoppingCart extends Component {
 
   reduceCartItems = () => {
     const { cartItemsReduced } = this.state;
-    const result = cartItemsReduced.reduce((previousValue, currentValue) => {
+    const result = cartItemsReduced.reduceRight((previousValue, currentValue) => {
       if (previousValue.some(({ id }) => id === currentValue.id)) {
         return [...previousValue];
       }
@@ -56,23 +56,29 @@ class ShoppingCart extends Component {
     }
   };
 
-  incrementProductToCart = ({ target: { name } }) => {
+  incrementProductToCart = ({ target: { value } }) => {
     const { cartItems } = this.state;
-    const find = cartItems.find(({ index }) => index === Number(name));
-    handleLocalStorage(find);
+    const { index, quantity, available_quantity: maxQuantity } = JSON.parse(value);
+    if (quantity < maxQuantity) {
+      const find = cartItems.find((item) => item.index === Number(index));
+      handleLocalStorage(find);
+    }
     this.restoreCartProducts();
   };
 
-  decrementProductFromCart = ({ target: { name } }) => {
+  decrementProductFromCart = ({ target: { value } }) => {
+    const { quantity, index } = JSON.parse(value);
     const { cartItems } = this.state;
-    const productsNotRemoved = cartItems.filter(({ index }) => Number(name) !== index);
-    localStorage.setItem('cart', JSON.stringify(productsNotRemoved));
+    if (quantity > 1) {
+      const productsNotRemoved = cartItems.filter((item) => Number(index) !== item.index);
+      localStorage.setItem('cart', JSON.stringify(productsNotRemoved));
+    }
     this.restoreCartProducts();
   };
 
-  removeProductFromCart = ({ target: { name } }) => {
+  removeProductFromCart = ({ target: { value } }) => {
     const { cartItems } = this.state;
-    const productsNotRemoved = cartItems.filter((product) => name !== product.id);
+    const productsNotRemoved = cartItems.filter((product) => value !== product.id);
     localStorage.setItem('cart', JSON.stringify(productsNotRemoved));
     this.restoreCartProducts();
   };
@@ -94,7 +100,7 @@ class ShoppingCart extends Component {
                   type="button"
                   data-testid="remove-product"
                   onClick={ this.removeProductFromCart }
-                  name={ product.id }
+                  value={ product.id }
                 >
                   X
                 </button>
@@ -105,18 +111,21 @@ class ShoppingCart extends Component {
                   type="button"
                   data-testid="product-decrease-quantity"
                   onClick={ this.decrementProductFromCart }
-                  name={ product.index }
+                  value={ JSON.stringify(product) }
                 >
                   -
                 </button>
-                <span data-testid="shopping-cart-product-quantity">
-                  {`Quantidade no carrinho:${product.quantity}`}
+                <span>
+                  Quantidade no carrinho:
+                  <span data-testid="shopping-cart-product-quantity">
+                    {product.quantity}
+                  </span>
                 </span>
                 <button
                   type="button"
                   data-testid="product-increase-quantity"
                   onClick={ this.incrementProductToCart }
-                  name={ product.index }
+                  value={ JSON.stringify(product) }
                 >
                   +
                 </button>

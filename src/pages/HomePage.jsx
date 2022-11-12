@@ -10,11 +10,10 @@ class HomePage extends Component {
     searchInput: '',
     searchedProducts: [],
     listOfCategories: [],
-    // quantidade: [],
   };
 
   async componentDidMount() {
-    localStorage.setItem('cart', JSON.stringify([]));
+    if (!localStorage.getItem('cart')) localStorage.setItem('cart', JSON.stringify([]));
     const categories = await getCategories();
     this.setState({ listOfCategories: categories });
   }
