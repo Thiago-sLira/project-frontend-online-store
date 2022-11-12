@@ -17,8 +17,15 @@ export async function getProductById(productId) {
   return response;
 }
 
+// função de adicionar produtos ao localStorage
 export function handleLocalStorage(foundProduct) {
-  const getCartProducts = JSON.parse(localStorage.getItem('cart'));
+  const getLocalStorageProducts = JSON.parse(localStorage.getItem('cart'));
+  const getCartProducts = getLocalStorageProducts.map((product, index) => {
+    product.index = index;
+    return product;
+  });
+  const getIndex = getCartProducts[getCartProducts.length - 1];
+  foundProduct.index = !getIndex ? 0 : getIndex.index + 1;
   if (!getCartProducts) {
     localStorage.setItem('cart', JSON.stringify([foundProduct]));
   } else {
