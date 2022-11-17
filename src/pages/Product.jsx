@@ -52,13 +52,20 @@ class Product extends Component {
     this.setState({ checkboxInput });
   };
 
+  verifyEmail = (email) => {
+    const emailRegex = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
+    return emailRegex.test(email);
+  };
+
   handleAvaliationFormButton = () => {
     const { emailInput, textareaInput, rating, product } = this.state;
-    const validateFields = emailInput.length > 0 && textareaInput.length > 0;
-    const validateRating = rating.length;
-    if (!validateFields || !validateRating) {
+    // const validateFields = emailInput.length > 0 && textareaInput.length > 0;
+    // const validateRating = rating.length;
+    console.log(this.verifyEmail(emailInput));
+    if (!(this.verifyEmail(emailInput)) || !rating.length) {
       this.setState({ errorMessage: true });
     } else {
+      this.setState({ errorMessage: false });
       const evaluation = {
         email: emailInput,
         text: textareaInput,
@@ -66,7 +73,6 @@ class Product extends Component {
       const recoveryAndAddStorage = [...JSON.parse(localStorage.getItem(product.id))
         ?? [], evaluation];
       this.setState({
-        errorMessage: false,
         emailInput: '',
         textareaInput: '',
         checkboxInput: [false, false, false, false, false],
