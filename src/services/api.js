@@ -19,7 +19,7 @@ export async function getProductById(productId) {
 
 // função de adicionar produtos ao localStorage
 export function handleLocalStorage(foundProduct) {
-  const getLocalStorageProducts = JSON.parse(localStorage.getItem('cart'));
+  const getLocalStorageProducts = JSON.parse(localStorage.getItem('cart')) ?? [];
   const getCartProducts = getLocalStorageProducts.map((product, index) => {
     product.index = index;
     return product;

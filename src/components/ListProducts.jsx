@@ -17,6 +17,9 @@ class ListProducts extends Component {
                   </Link>
                   <span>{ product.title }</span>
                   <img src={ product.thumbnail } alt={ product.title } />
+                  { product.shipping.free_shipping && (
+                    <p data-testid="free-shipping">Frete Grátis</p>
+                  ) }
                   <p>{ product.price }</p>
                   <button
                     type="button"

@@ -10,6 +10,7 @@ class Product extends Component {
     checkboxInput: [false, false, false, false, false],
     errorMessage: false,
     evaluations: [],
+    rating: '',
   };
 
   async componentDidMount() {
@@ -52,30 +53,33 @@ class Product extends Component {
   };
 
   handleAvaliationFormButton = () => {
-    const { emailInput, textareaInput, checkboxInput, product } = this.state;
+    const { emailInput, textareaInput, rating, product } = this.state;
     const validateFields = emailInput.length > 0 && textareaInput.length > 0;
-    const validateRating = checkboxInput.includes(true);
+    const validateRating = rating.length;
     if (!validateFields || !validateRating) {
       this.setState({ errorMessage: true });
     } else {
       const evaluation = {
         email: emailInput,
         text: textareaInput,
-        rating: checkboxInput };
-      localStorage.setItem(product.id, JSON.stringify(evaluation));
+        rating };
+      const recoveryAndAddStorage = [...JSON.parse(localStorage.getItem(product.id))
+        ?? [], evaluation];
       this.setState({
         errorMessage: false,
         emailInput: '',
         textareaInput: '',
         checkboxInput: [false, false, false, false, false],
+        rating: '',
+        evaluations: recoveryAndAddStorage,
       });
+      localStorage.setItem(product.id, JSON.stringify(recoveryAndAddStorage));
     }
   };
 
   handleEvaluations = (product) => {
-    // const { product, evaluations } = this.state;
-    const restoredEvaluation = JSON.parse(localStorage.getItem(product.id));
-    this.setState({ evaluations: [restoredEvaluation] });
+    const restoredEvaluation = JSON.parse(localStorage.getItem(product.id)) ?? [];
+    this.setState({ evaluations: restoredEvaluation });
   };
 
   render() {
@@ -119,8 +123,9 @@ class Product extends Component {
               />
             </label>
 
-            <label htmlFor="Message" data-testid="product-detail-evaluation">
+            <label htmlFor="Message">
               <input
+                data-testid="product-detail-evaluation"
                 type="textarea"
                 placeholder="Mensagem opcional"
                 id="Message"
@@ -133,11 +138,16 @@ class Product extends Component {
               checkboxInput.map((box, index) => (
                 <label htmlFor={ index } key={ index }>
                   <input
-                    data-testid={ `${index}-rating` }
+                    data-testid={ `${index + 1}-rating` }
                     type="checkbox"
                     id={ index }
                     checked={ box }
-                    onChange={ this.handleCheckboxAvaliation }
+                    onChange={ (event) => {
+                      this.handleCheckboxAvaliation(event);
+                      this.handleChange(event);
+                    } }
+                    value={ index + 1 }
+                    name="rating"
                   />
                 </label>
               ))
@@ -152,31 +162,23 @@ class Product extends Component {
           </form>
         </fieldset>
         { errorMessage && <h4 data-testid="error-msg">Campos inválidos</h4>}
-        { evaluations.length > 0
-
+        { Boolean(evaluations.length)
         && (
-
-          <div>
-            <span data-testid="review-card-email">
-              { evaluations[0].email}
-              {' '}
-            </span>
-            <span
-              data-testid="review-card-evaluation"
-            >
-              {evaluations[0].text}
-            </span>
-            {evaluations[0].rating.map((box, index) => (
-              <label data-testid="review-card-rating" htmlFor={ index } key={ index }>
-                <input
-                  disabled
-                  type="checkbox"
-                  id={ index }
-                  checked={ box }
-                />
-              </label>
-            ))}
-          </div>
+          evaluations.map((evaluation, index) => (
+            <div key={ `${evaluation.email}${index}` }>
+              <p data-testid="review-card-email">
+                { evaluation.email}
+              </p>
+              <p
+                data-testid="review-card-evaluation"
+              >
+                {evaluation.text}
+              </p>
+              <p data-testid="review-card-rating">
+                {evaluation.rating}
+              </p>
+            </div>
+          ))
         )}
       </div>
     );
